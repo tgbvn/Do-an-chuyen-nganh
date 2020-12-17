@@ -1,0 +1,23 @@
+output:
+  logstash:
+    enabled: true
+    hosts:
+      - elk:5044
+    timeout: 15
+    #ssl:
+      #certificate_authorities:
+          #- /etc/filebeat/logstash-beats.crt
+
+filebeat:
+  inputs:
+    -
+      paths:
+        - /var/log/apache2/modsec_audit.log
+      type: log
+      enabled: true
+      fields:
+        log_name: filebeat_modsec
+      multiline.pattern: "^--[a-fA-F0-9]{8}-Z--$"
+      multiline.negate: true
+      multiline.match: before
+      tags: ["modsecurity"]
